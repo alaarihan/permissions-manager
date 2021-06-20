@@ -30,14 +30,45 @@
         label="Additional Actions"
         caption="Show/Hide additional actions"
       >
-         <q-card>
+        <q-card>
           <q-card-section>
-            <q-checkbox
-              v-for="op in ops"
-              :key="op"
-              v-model="perm.def.ops[op]"
-              :label="op"
+            <q-option-group
+              v-model="perm.def.ops"
+              :options="ops"
+              type="checkbox"
+              color="primary"
+              inline
+              dense
             />
+            <v-template
+              v-if="
+                route.params.type === 'CREATE' || route.params.type === 'UPDATE'
+              "
+            >
+              <div
+                v-for="field in activeObjectFields"
+                :key="field.name"
+                class="q-mt-md"
+              >
+                <q-separator />
+                <div class="text-subtitle1 text-weight-bold q-pt-sm">
+                  {{ field.name }} field nested actions
+                </div>
+                <q-option-group
+                  v-if="perm.def.objectFieldsOps"
+                  v-model="perm.def.objectFieldsOps[field.name]"
+                  :options="
+                    route.params.type === 'CREATE'
+                      ? objectFieldsOps.CREATE
+                      : objectFieldsOps.UPDATE
+                  "
+                  type="checkbox"
+                  color="primary"
+                  inline
+                  dense
+                />
+              </div>
+            </v-template>
           </q-card-section>
         </q-card>
       </q-expansion-item>
@@ -68,7 +99,7 @@
         label="Set"
         caption="Set default fields values"
       >
-         <q-card class="q-pb-sm">
+        <q-card class="q-pb-sm">
           <q-card-section>
             <q-input
               v-model="perm.def.set"
@@ -91,7 +122,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMutation, useQuery } from '@urql/vue';
 import clone from 'just-clone';
@@ -147,20 +178,45 @@ export default defineComponent({
       },
     });
     type EmptyDef = {
-      ops: Record<string, boolean>;
+      ops: string[];
       columns?: string[];
       check: string | Record<string, unknown>;
       set?: string | Record<string, unknown>;
+      objectFieldsOps?: Record<string, string[]>;
     };
     const emptyPerm = {
       id: null,
       active: false,
-      def: { columns: [], check: '', set: '', ops: {} } as EmptyDef,
+      def: {
+        columns: [],
+        check: '',
+        set: '',
+        ops: [],
+        objectFieldsOps: {},
+      } as EmptyDef,
     };
     const perm = ref(emptyPerm);
-    const model = ref({});
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const model = ref({} as any);
     const columns = ref([]);
     onMounted(async () => {
+      const modelRes = await modelQuery.executeQuery({
+        requestPolicy: 'network-only',
+      });
+      if (modelRes.error.value) {
+        $q.notify({
+          type: 'negative',
+          message: `Couldn't fetch model fields from the db! (${modelRes.error.value})`,
+        });
+      }
+      if (modelRes.data?.value) {
+        model.value = modelRes.data.value.models[0];
+        columns.value = modelRes.data.value.models[0].fields.map(
+          (field: Record<string, string>) => {
+            return { label: field.name, value: field.name };
+          }
+        );
+      }
       const { data, error } = await permQuery.executeQuery({
         requestPolicy: 'network-only',
       });
@@ -185,25 +241,15 @@ export default defineComponent({
           perm.value.def.set = JSON.stringify(perm.value.def.set);
         }
         if (!perm.value?.def?.ops) {
-          perm.value.def.ops = {};
+          perm.value.def.ops = [];
         }
-      }
-      const modelRes = await modelQuery.executeQuery({
-        requestPolicy: 'network-only',
-      });
-      if (modelRes.error.value) {
-        $q.notify({
-          type: 'negative',
-          message: `Couldn't fetch model fields from the db! (${modelRes.error.value})`,
-        });
-      }
-      if (modelRes.data?.value) {
-        model.value = modelRes.data.value.models[0];
-        columns.value = modelRes.data.value.models[0].fields.map(
-          (field: Record<string, string>) => {
-            return { label: field.name, value: field.name };
-          }
-        );
+        if (['CREATE', 'UPDATE'].includes(route.params.type as string)) {
+          perm.value.def.objectFieldsOps = getObjectFieldsOps(
+            perm.value.def.objectFieldsOps
+          );
+        } else {
+          delete perm.value.def.objectFieldsOps;
+        }
       }
     });
 
@@ -311,7 +357,53 @@ export default defineComponent({
       UPDATE: ['updateMany'],
       DELETE: ['deleteMany'],
     };
-    const ops = actionsOps[route.params.type as string];
+    const ops = actionsOps[route.params.type as string].map((item: string) => {
+      return { label: item, value: item };
+    });
+    const objectFields = computed(
+      () =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        model.value?.fields?.filter(
+          (field: Record<string, unknown>) => field.kind === 'object'
+        ) || []
+    );
+
+    const activeObjectFields = computed(
+      () =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        model.value?.fields?.filter(
+          (field: Record<string, unknown>) =>
+            field.kind === 'object' &&
+            perm?.value?.def?.columns?.includes(field.name as string)
+        ) || []
+    );
+
+    function getObjectFieldsOps(
+      defaultVal?: Record<string, string[]>
+    ): Record<string, string[]> {
+      const defaultOps = defaultVal || {};
+      objectFields.value.forEach((field: Record<string, unknown>) => {
+        if (!defaultOps[field.name as string]) {
+          defaultOps[field.name as string] = [];
+        }
+      });
+      console.log(defaultOps);
+      return defaultOps;
+    }
+
+    const objectFieldsOps = {
+      CREATE: [
+        { label: 'connect', value: 'connect' },
+        { label: 'connectOrCreate', value: 'connectOrCreate' },
+      ],
+      UPDATE: [
+        { label: 'connect', value: 'connect' },
+        { label: 'disconnect', value: 'disconnect' },
+        { label: 'set', value: 'set' },
+        { label: 'connectOrCreate', value: 'connectOrCreate' },
+      ],
+    };
+
     return {
       route,
       perm,
@@ -322,6 +414,8 @@ export default defineComponent({
       validateJson,
       sectionsCap,
       ops,
+      activeObjectFields,
+      objectFieldsOps,
     };
   },
 });
