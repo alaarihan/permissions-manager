@@ -10,7 +10,6 @@ const routes = [
         component: () => import('pages/Index.vue'),
         beforeEnter: (to: RouteLocationNormalized) => {
           if(to.query?.api){
-            console.log(to.query.api)
             Cookies.set('apiUrl', to.query.api as string, {
               expires: 60 * 60 * 24 * 14,
               path: '/',

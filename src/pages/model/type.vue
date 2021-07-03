@@ -386,7 +386,6 @@ export default defineComponent({
           defaultOps[field.name as string] = [];
         }
       });
-      console.log(defaultOps);
       return defaultOps;
     }
 
