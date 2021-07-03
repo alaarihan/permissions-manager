@@ -3,7 +3,7 @@
     <q-checkbox v-model="perm.active" label="Active" />
     <q-list bordered class="rounded-borders">
       <q-expansion-item
-        v-if="route.params.type !== 'DELETE'"
+        v-if="$route.params.type !== 'DELETE'"
         v-model="sections.columns"
         expand-separator
         icon="view_column"
@@ -42,7 +42,7 @@
             />
             <v-template
               v-if="
-                route.params.type === 'CREATE' || route.params.type === 'UPDATE'
+                $route.params.type === 'CREATE' || $route.params.type === 'UPDATE'
               "
             >
               <div
@@ -58,7 +58,7 @@
                   v-if="perm.def.objectFieldsOps"
                   v-model="perm.def.objectFieldsOps[field.name]"
                   :options="
-                    route.params.type === 'CREATE'
+                    $route.params.type === 'CREATE'
                       ? objectFieldsOps.CREATE
                       : objectFieldsOps.UPDATE
                   "
@@ -92,7 +92,7 @@
         </q-card>
       </q-expansion-item>
       <q-expansion-item
-        v-if="route.params.type === 'CREATE' || route.params.type === 'UPDATE'"
+        v-if="$route.params.type === 'CREATE' || $route.params.type === 'UPDATE'"
         v-model="sections.set"
         expand-separator
         icon="auto_awesome"
@@ -128,7 +128,6 @@ import { useMutation, useQuery } from '@urql/vue';
 import clone from 'just-clone';
 export default defineComponent({
   name: 'Type',
-
   setup() {
     const route = useRoute();
     const $q = useQuasar();
@@ -405,7 +404,6 @@ export default defineComponent({
     };
 
     return {
-      route,
       perm,
       model,
       columns,

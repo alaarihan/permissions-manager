@@ -41,8 +41,6 @@ export default defineComponent({
       };
     };
     useMeta(metaData);
-    const routeKeys = Object.keys(route.params);
-    return { route, routeKeys };
   },
 });
 </script>

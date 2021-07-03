@@ -3,15 +3,14 @@
     <template v-slot:before>
       <h4 class="q-mt-none q-mb-sm text-center">Roles</h4>
       <q-separator />
-      <q-tabs vertical :modelValue="route.params.role">
+      <q-tabs vertical :modelValue="$route.params.role">
         <q-route-tab
           v-for="role in roles"
           :key="role"
           icon="account_box"
-          :to="`/model/${route?.params?.model}/${role}/READ`"
+          :to="`/model/${$route?.params?.model}/${role}`"
           :name="role"
           :label="role"
-          exact
         />
       </q-tabs>
     </template>
@@ -25,12 +24,12 @@
         <q-breadcrumbs-el
           v-for="k in routeKeys()"
           :key="k"
-          :label="route.params[k]"
+          :label="$route.params[k]"
           icon="widgets"
         />
       </q-breadcrumbs>
       <q-tab-panels
-        :modelValue="route.params.role"
+        :modelValue="$route.params.role"
         animated
         swipeable
         vertical
@@ -78,7 +77,6 @@ export default defineComponent({
     return {
       tab: ref(''),
       roles,
-      route,
       splitterModel,
       routeKeys,
     };
