@@ -20,6 +20,10 @@ const routes = [
         },
       },
       {
+        path: '/settings',
+        component: () => import('pages/settings.vue'),
+      },
+      {
         path: '/model/:model',
         component: () => import('pages/model/index.vue'),
         children: [

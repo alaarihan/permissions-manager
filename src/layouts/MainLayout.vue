@@ -14,6 +14,7 @@
           </q-avatar>
           Permissions Manager
         </q-toolbar-title>
+        <q-btn dense flat round icon="settings" to="/settings" />
       </q-toolbar>
     </q-header>
 

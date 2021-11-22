@@ -126,6 +126,20 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMutation, useQuery } from '@urql/vue';
 import clone from 'just-clone';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let settings: any;
+if(localStorage.getItem('settings')){
+settings = JSON.parse(localStorage.getItem('settings') as string)
+} else{
+  settings = {
+     queryMap: {
+        findUniquePermission: 'findUniquePermission',
+        createOnePermission: 'createOnePermission',
+        updateOnePermission: 'updateOnePermission'
+    }
+  }
+}
+
 export default defineComponent({
   name: 'Type',
   setup() {
@@ -134,7 +148,7 @@ export default defineComponent({
     const permQuery = useQuery({
       query: `
         query ($where: PermissionWhereUniqueInput!) {
-          perm:findUniquePermission(where: $where){
+          perm:${settings?.queryMap.findUniquePermission}(where: $where){
             id
             active
             role
@@ -254,7 +268,7 @@ export default defineComponent({
 
     const createPermMutation = useMutation(
       ` mutation ($data: PermissionCreateInput!) {
-        perm:createOnePermission(data: $data){
+        perm:${settings.queryMap.createOnePermission}(data: $data){
           id
           active
           role
@@ -267,7 +281,7 @@ export default defineComponent({
     );
     const updatePermMutation = useMutation(
       ` mutation ($where: PermissionWhereUniqueInput!, $data: PermissionUpdateInput!) {
-        perm:updateOnePermission(where: $where, data: $data){
+        perm:${settings.queryMap.updateOnePermission}(where: $where, data: $data){
           id
           active
           role
@@ -351,7 +365,7 @@ export default defineComponent({
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const actionsOps: Record<string, any> = {
-      READ: ['findMany', 'count', 'aggregate', 'subscription'],
+      READ: ['findFirst', 'findMany', 'count', 'aggregate', 'subscription'],
       CREATE: ['createMany'],
       UPDATE: ['updateMany'],
       DELETE: ['deleteMany'],
