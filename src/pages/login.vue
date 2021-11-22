@@ -25,7 +25,7 @@
   </q-page>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
 import { ref } from 'vue';
 import { useMutation } from '@urql/vue';

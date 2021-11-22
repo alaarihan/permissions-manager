@@ -119,17 +119,16 @@
   </q-form>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMutation, useQuery } from '@urql/vue';
 import clone from 'just-clone';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let settings: any;
+let settings;
 if(localStorage.getItem('settings')){
-settings = JSON.parse(localStorage.getItem('settings') as string)
+settings = JSON.parse(localStorage.getItem('settings'))
 } else{
   settings = {
      queryMap: {
@@ -190,13 +189,6 @@ export default defineComponent({
         },
       },
     });
-    type EmptyDef = {
-      ops: string[];
-      columns?: string[];
-      check: string | Record<string, unknown>;
-      set?: string | Record<string, unknown>;
-      objectFieldsOps?: Record<string, string[]>;
-    };
     const emptyPerm = {
       id: null,
       active: false,
@@ -206,11 +198,10 @@ export default defineComponent({
         set: '',
         ops: [],
         objectFieldsOps: {},
-      } as EmptyDef,
+      },
     };
     const perm = ref(emptyPerm);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const model = ref({} as any);
+    const model = ref({});
     const columns = ref([]);
     onMounted(async () => {
       const modelRes = await modelQuery.executeQuery({
@@ -225,7 +216,7 @@ export default defineComponent({
       if (modelRes.data?.value) {
         model.value = modelRes.data.value.models[0];
         columns.value = modelRes.data.value.models[0].fields.map(
-          (field: Record<string, string>) => {
+          (field) => {
             return { label: field.name, value: field.name };
           }
         );
@@ -256,7 +247,7 @@ export default defineComponent({
         if (!perm.value?.def?.ops) {
           perm.value.def.ops = [];
         }
-        if (['CREATE', 'UPDATE'].includes(route.params.type as string)) {
+        if (['CREATE', 'UPDATE'].includes(route.params.type)) {
           perm.value.def.objectFieldsOps = getObjectFieldsOps(
             perm.value.def.objectFieldsOps
           );
@@ -302,10 +293,10 @@ export default defineComponent({
 
       const permToSave = clone(perm.value);
       if (permToSave.def.check) {
-        permToSave.def.check = JSON.parse(permToSave.def.check as string);
+        permToSave.def.check = JSON.parse(permToSave.def.check);
       }
       if (permToSave.def.set) {
-        permToSave.def.set = JSON.parse(permToSave.def.set as string);
+        permToSave.def.set = JSON.parse(permToSave.def.set);
       }
       if (!permToSave.id) {
         const newPerm = {
@@ -342,7 +333,7 @@ export default defineComponent({
 
     const sections = ref({ ops: true, columns: true, check: true, set: true });
 
-    function validateJson(val: string) {
+    function validateJson(val) {
       if (!val) return true;
       try {
         JSON.parse(val);
@@ -362,42 +353,38 @@ export default defineComponent({
           ? 'Show/Hide columns'
           : `Allow/Prevent ${route.params.type} columns`,
     };
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const actionsOps: Record<string, any> = {
+    const actionsOps = {
       READ: ['findFirst', 'findMany', 'count', 'aggregate', 'subscription'],
       CREATE: ['createMany'],
       UPDATE: ['updateMany'],
       DELETE: ['deleteMany'],
     };
-    const ops = actionsOps[route.params.type as string].map((item: string) => {
+    const ops = actionsOps[route.params.type].map((item) => {
       return { label: item, value: item };
     });
     const objectFields = computed(
       () =>
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         model.value?.fields?.filter(
-          (field: Record<string, unknown>) => field.kind === 'object'
+          (field) => field.kind === 'object'
         ) || []
     );
 
     const activeObjectFields = computed(
       () =>
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         model.value?.fields?.filter(
-          (field: Record<string, unknown>) =>
+          (field) =>
             field.kind === 'object' &&
-            perm?.value?.def?.columns?.includes(field.name as string)
+            perm?.value?.def?.columns?.includes(field.name)
         ) || []
     );
 
     function getObjectFieldsOps(
-      defaultVal?: Record<string, string[]>
-    ): Record<string, string[]> {
+      defaultVal
+    ) {
       const defaultOps = defaultVal || {};
-      objectFields.value.forEach((field: Record<string, unknown>) => {
-        if (!defaultOps[field.name as string]) {
-          defaultOps[field.name as string] = [];
+      objectFields.value.forEach((field) => {
+        if (!defaultOps[field.name]) {
+          defaultOps[field.name] = [];
         }
       });
       return defaultOps;

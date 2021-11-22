@@ -1,11 +1,11 @@
 <template>
   <router-view />
 </template>
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
-import { Client, ClientOptions, createClient, provideClient } from '@urql/vue';
+import { createClient, provideClient } from '@urql/vue';
 import { Cookies } from 'quasar';
-let client: ClientOptions | Client;
+let client;
 const apiUrl = () => Cookies.get('apiUrl');
 if (apiUrl()?.startsWith('http')) {
   client = createClient({

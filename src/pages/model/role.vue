@@ -42,7 +42,7 @@
   </q-card>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

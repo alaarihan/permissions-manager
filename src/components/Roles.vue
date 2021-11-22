@@ -44,7 +44,7 @@
   </q-splitter>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
 import { ref } from 'vue';
@@ -70,7 +70,7 @@ export default defineComponent({
       });
     }
     const roles = data.value.roles.filter(
-      (role: string) => !['ROOT', 'BLOCKED'].includes(role)
+      (role) => !['ROOT', 'BLOCKED'].includes(role)
     );
     const splitterModel = ref(170);
     const routeKeys = () => Object.keys(route.params);

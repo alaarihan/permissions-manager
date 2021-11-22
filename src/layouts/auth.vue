@@ -5,14 +5,14 @@
     </q-page-container>
   </q-layout>
 </template>
-<script lang="ts">
+<script>
 import { useMeta } from 'quasar';
 
 const metaData = {
   // sets document title
   title: '',
   // optional; sets final title as "Index Page - My Website", useful for multiple level meta
-  titleTemplate: (title: string) => `${title ? title + ' - ' : ''}Permissions Manager`,
+  titleTemplate: (title) => `${title ? title + ' - ' : ''}Permissions Manager`,
 };
 export default {
   setup() {

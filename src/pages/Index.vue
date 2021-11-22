@@ -33,7 +33,7 @@
   </q-page>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, ref } from 'vue';
 import { Cookies, useMeta } from 'quasar';
 const metaData = {

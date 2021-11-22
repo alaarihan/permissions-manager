@@ -1,4 +1,3 @@
-import { RouteLocationNormalized } from 'vue-router'
 import { Cookies } from 'quasar';
 const routes = [
   {
@@ -8,9 +7,9 @@ const routes = [
       {
         path: '',
         component: () => import('pages/Index.vue'),
-        beforeEnter: (to: RouteLocationNormalized) => {
+        beforeEnter: (to) => {
           if(to.query?.api){
-            Cookies.set('apiUrl', to.query.api as string, {
+            Cookies.set('apiUrl', to.query.api, {
               expires: 60 * 60 * 24 * 14,
               path: '/',
             });

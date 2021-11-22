@@ -6,26 +6,24 @@
   "author": "Alaa Rihan <alaa.addeen@gmail.com>",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.vue ./",
+    "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.12.1",
+    "@quasar/extras": "^1.0.0",
     "@urql/vue": "^0.6.0",
-    "core-js": "^3.19.1",
+    "core-js": "^3.6.5",
     "graphql": "^15.5.0",
     "just-clone": "^5.0.1",
-    "quasar": "^2.3.3"
+    "quasar": "^2.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
-    "@quasar/app": "^3.2.3",
-    "@types/node": "^16.11.9",
-    "@typescript-eslint/eslint-plugin": "^4.16.1",
-    "@typescript-eslint/parser": "^4.16.1",
+    "@quasar/app": "^3.0.0",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-vue": "^7.0.0"
+    "eslint-plugin-vue": "^7.0.0",
+    "eslint-webpack-plugin": "^2.4.0"
   },
   "browserslist": [
     "last 10 Chrome versions",

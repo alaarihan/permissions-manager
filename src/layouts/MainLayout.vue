@@ -46,7 +46,7 @@
   </q-layout>
 </template>
 
-<script lang="ts">
+<script>
 import { useMeta } from 'quasar';
 import { ref } from 'vue';
 import MenuItems from 'components/MenuItems.vue';
@@ -54,7 +54,7 @@ const metaData = {
   // sets document title
   title: '',
   // optional; sets final title as "Index Page - My Website", useful for multiple level meta
-  titleTemplate: (title: string) =>
+  titleTemplate: (title) =>
     `${title ? title + ' - ' : ''}Permissions Manager`,
 };
 

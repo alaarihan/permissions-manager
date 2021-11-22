@@ -11,7 +11,7 @@
                     label="API URL *"
                     lazy-rules
                     :rules="[
-                        (val: String) =>
+                        (val) =>
                             (val && val.length > 0 && val.startsWith('http')) ||
                             'Please enter a valid API URL!',
                     ]"
@@ -22,7 +22,7 @@
                     label="findUniquePermission"
                     lazy-rules
                     :rules="[
-                        (val: String) =>
+                        (val) =>
                             (!!val) ||
                             'This field is required!',
                     ]"
@@ -33,7 +33,7 @@
                     label="createOnePermission"
                     lazy-rules
                     :rules="[
-                        (val: String) =>
+                        (val) =>
                             (!!val) ||
                             'This field is required!',
                     ]"
@@ -44,7 +44,7 @@
                     label="updateOnePermission"
                     lazy-rules
                     :rules="[
-                        (val: String) =>
+                        (val) =>
                             (!!val) ||
                             'This field is required!',
                     ]"
@@ -57,7 +57,7 @@
     </q-page>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent, ref } from 'vue';
 import { Cookies, useMeta, useQuasar } from 'quasar';
 const metaData = {
@@ -69,10 +69,9 @@ export default defineComponent({
     setup() {
         const $q = useQuasar();
         const apiUrlCookie = () => Cookies.get('apiUrl');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const settings = ref({ queryMap: {} } as any);
+        const settings = ref({ queryMap: {} });
         if (localStorage.getItem('settings')) {
-            settings.value = JSON.parse(localStorage.getItem('settings') as string)
+            settings.value = JSON.parse(localStorage.getItem('settings'))
         } else {
             settings.value = {
                 apiUrl: apiUrlCookie(),

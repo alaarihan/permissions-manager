@@ -21,7 +21,7 @@
   </q-page>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
 import { useMeta } from 'quasar';
 import { useRoute } from 'vue-router';
@@ -37,7 +37,7 @@ export default defineComponent({
     const metaData = () => {
       return {
         // sets document title
-        title: route.params?.model as string,
+        title: route.params?.model,
       };
     };
     useMeta(metaData);
