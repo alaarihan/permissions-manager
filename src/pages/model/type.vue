@@ -354,10 +354,10 @@ export default defineComponent({
           : `Allow/Prevent ${route.params.type} columns`,
     };
     const actionsOps = {
-      READ: ['findFirst', 'findMany', 'count', 'aggregate', 'subscription'],
-      CREATE: ['createMany'],
-      UPDATE: ['updateMany'],
-      DELETE: ['deleteMany'],
+      READ: ['findUnique', 'findFirst', 'findMany', 'count', 'aggregate', 'subscription'],
+      CREATE: ['createOne','createMany'],
+      UPDATE: ['updateOne', 'updateMany', 'upsertOne'],
+      DELETE: ['deleteOne', 'deleteMany'],
     };
     const ops = actionsOps[route.params.type].map((item) => {
       return { label: item, value: item };
