@@ -146,8 +146,8 @@ export default defineComponent({
     const $q = useQuasar();
     const permQuery = useQuery({
       query: `
-        query ($where: PermissionWhereUniqueInput!) {
-          perm:${settings?.queryMap.findUniquePermission}(where: $where){
+        query ($role_type_model: PermissionRoleTypeModelCompoundUniqueInput) {
+          perm:${settings?.queryMap.findUniquePermission}(where: { role_type_model: $role_type_model }){
             id
             active
             role
@@ -158,12 +158,10 @@ export default defineComponent({
         }
       `,
       variables: {
-        where: {
-          role_type_model: {
-            role: route.params.role,
-            model: route.params.model,
-            type: route.params.type,
-          },
+        role_type_model: {
+          role: route.params.role,
+          model: route.params.model,
+          type: route.params.type,
         },
       },
     });
@@ -271,8 +269,8 @@ export default defineComponent({
     `
     );
     const updatePermMutation = useMutation(
-      ` mutation ($where: PermissionWhereUniqueInput!, $data: PermissionUpdateInput!) {
-        perm:${settings.queryMap.updateOnePermission}(where: $where, data: $data){
+      ` mutation ($id: Int, $data: PermissionUpdateInput!) {
+        perm:${settings.queryMap.updateOnePermission}(where: { id: $id }, data: $data){
           id
           active
           role
@@ -310,7 +308,7 @@ export default defineComponent({
         });
       } else {
         const variables = {
-          where: { id: permToSave.id },
+          id: permToSave.id,
           data: { active: permToSave.active, def: permToSave.def },
         };
         savePermRes = await updatePermMutation.executeMutation(variables);
